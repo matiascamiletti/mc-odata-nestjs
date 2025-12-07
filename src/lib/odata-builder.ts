@@ -158,7 +158,7 @@ export class ODataBuilder<T> {
         }
     }
 
-    private addWhere(index: number, condition: string, parameters: any) {
+    public addWhere(index: number, condition: string, parameters: any) {
         // Fix field name in condition to refer to 'entity' alias if strictly a local field
         // This is a bit hacky with string replacement, but sufficient for simple cases.
         if (!condition.startsWith('entity.') && !condition.includes('.')) {

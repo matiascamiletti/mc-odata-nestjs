@@ -1,0 +1,11 @@
+name: mc-odata-nestjs
+
+services:
+  mc-odata-nestjs:
+    restart: no
+    build:
+      context: ./
+      dockerfile: Dockerfile.dev
+    command: sh -c "npm install --force && npm test && npm run build"
+    volumes:
+      - ./:/app

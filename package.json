@@ -1,6 +1,6 @@
 {
   "name": "@mckit/odata-nestjs",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "",
   "main": "dist/index.js",
   "typings": "dist/index.d.ts",
@@ -27,8 +27,6 @@
     "luxon": "^3.5.0"
   },
   "peerDependencies": {
-    "@nestjs/common": "^10.0.0",
-    "@nestjs/core": "^10.0.0",
     "typeorm": "^0.3.0",
     "rxjs": "^7.0.0"
   },

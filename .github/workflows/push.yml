@@ -1,0 +1,19 @@
+name: mc-odata-nestjs
+on:
+  push:
+    branches:
+      - main 
+
+jobs:
+  publish-gpr:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v3
+        with:
+          node-version: 18
+          registry-url: https://npm.pkg.github.com/
+      - run: npm install
+      - run: tsc && npm publish
+    env:
+      NODE_AUTH_TOKEN: ${{secrets.PUBLISH_SECRET}}

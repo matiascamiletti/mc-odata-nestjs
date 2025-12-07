@@ -117,15 +117,15 @@ export class ODataBuilder<T> {
     private parseAndApplyFilter(filter: string, index: number) {
         // Regex patterns for different operators
         const strategies = [
-            { pattern: /(.+?) eq (.+)/, handle: (field: string, value: string) => this.addWhere(index, `${field} = :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
-            { pattern: /(.+?) ne (.+)/, handle: (field: string, value: string) => this.addWhere(index, `${field} != :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
-            { pattern: /(.+?) gt (.+)/, handle: (field: string, value: string) => this.addWhere(index, `${field} > :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
-            { pattern: /(.+?) ge (.+)/, handle: (field: string, value: string) => this.addWhere(index, `${field} >= :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
-            { pattern: /(.+?) lt (.+)/, handle: (field: string, value: string) => this.addWhere(index, `${field} < :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
-            { pattern: /(.+?) le (.+)/, handle: (field: string, value: string) => this.addWhere(index, `${field} <= :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
-            { pattern: /contains\((.+?),(.+?)\)/, handle: (field: string, value: string) => this.addWhere(index, `entity.${field} LIKE :val${index}`, { [`val${index}`]: `%${this.parseValue(value)}%` }) },
-            { pattern: /startswith\((.+?),(.+?)\)/, handle: (field: string, value: string) => this.addWhere(index, `entity.${field} LIKE :val${index}`, { [`val${index}`]: `${this.parseValue(value)}%` }) },
-            { pattern: /endswith\((.+?),(.+?)\)/, handle: (field: string, value: string) => this.addWhere(index, `entity.${field} LIKE :val${index}`, { [`val${index}`]: `%${this.parseValue(value)}` }) },
+            { pattern: /(.+?) eq (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} = :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
+            { pattern: /(.+?) ne (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} != :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
+            { pattern: /(.+?) gt (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} > :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
+            { pattern: /(.+?) ge (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} >= :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
+            { pattern: /(.+?) lt (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} < :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
+            { pattern: /(.+?) le (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} <= :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
+            { pattern: /contains\((.+?),(.+?)\)/, handle: (field: string, value: string) => this.addWhere(`${field} LIKE :val${index}`, { [`val${index}`]: `%${this.parseValue(value)}%` }) },
+            { pattern: /startswith\((.+?),(.+?)\)/, handle: (field: string, value: string) => this.addWhere(`${field} LIKE :val${index}`, { [`val${index}`]: `${this.parseValue(value)}%` }) },
+            { pattern: /endswith\((.+?),(.+?)\)/, handle: (field: string, value: string) => this.addWhere(`${field} LIKE :val${index}`, { [`val${index}`]: `%${this.parseValue(value)}` }) },
         ];
 
         for (const strategy of strategies) {
@@ -158,7 +158,7 @@ export class ODataBuilder<T> {
         }
     }
 
-    public addWhere(index: number, condition: string, parameters: any) {
+    public addWhere(condition: string, parameters: any) {
         // Fix field name in condition to refer to 'entity' alias if strictly a local field
         // This is a bit hacky with string replacement, but sufficient for simple cases.
         if (!condition.startsWith('entity.') && !condition.includes('.')) {
@@ -169,6 +169,9 @@ export class ODataBuilder<T> {
     }
 
     private parseValue(value: string): any {
+        if (value.startsWith('"') && value.endsWith('"')) {
+            return value.slice(1, -1);
+        }
         if (value.startsWith("'") && value.endsWith("'")) {
             return value.slice(1, -1);
         }

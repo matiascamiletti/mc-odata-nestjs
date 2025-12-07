@@ -45,11 +45,20 @@ export class ODataBuilder<T> {
         const skip = this.request.$skip ? parseInt(this.request.$skip) : 0;
         const limit = this.request.$top ? parseInt(this.request.$top) : 0;
 
+        const per_page = limit > 0 ? limit : total;
+        const current_page = limit > 0 ? Math.floor(skip / limit) + 1 : 1;
+        const last_page = limit > 0 ? Math.ceil(total / limit) : 1;
+        const from = total === 0 ? 0 : skip + 1;
+        const to = total === 0 ? 0 : skip + data.length;
+
         return {
             data,
-            total,
-            skip,
-            limit
+            current_page,
+            from,
+            last_page,
+            per_page,
+            to,
+            total
         };
     }
 

@@ -72,4 +72,41 @@ describe('ODataBuilder', () => {
         expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('entity.profile', 'profile');
         expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledTimes(1);
     });
+    it('should return correct response structure', async () => {
+        (queryBuilder.getManyAndCount as jest.Mock).mockResolvedValue([
+            [{ id: 1, name: 'Test' }],
+            15 // total
+        ]);
+
+        const result = await ODataBuilder.for(repo, { $top: '10', $skip: '0' }).execute();
+
+        expect(result).toEqual({
+            data: [{ id: 1, name: 'Test' }],
+            total: 15,
+            per_page: 10,
+            current_page: 1,
+            last_page: 2,
+            from: 1,
+            to: 1
+        });
+    });
+
+    it('should return correct response structure for second page', async () => {
+        (queryBuilder.getManyAndCount as jest.Mock).mockResolvedValue([
+            [{ id: 11, name: 'Test 2' }],
+            15 // total
+        ]);
+
+        const result = await ODataBuilder.for(repo, { $top: '10', $skip: '10' }).execute();
+
+        expect(result).toEqual({
+            data: [{ id: 11, name: 'Test 2' }],
+            total: 15,
+            per_page: 10,
+            current_page: 2,
+            last_page: 2,
+            from: 11,
+            to: 11
+        });
+    });
 });

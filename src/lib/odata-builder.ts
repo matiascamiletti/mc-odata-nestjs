@@ -117,6 +117,8 @@ export class ODataBuilder<T> {
     private parseAndApplyFilter(filter: string, index: number) {
         // Regex patterns for different operators
         const strategies = [
+            { pattern: /(.+?) eq 'null'/i, handle: (field: string) => this.addWhere(`${field} IS NULL`, {}) },
+            { pattern: /(.+?) ne 'null'/i, handle: (field: string) => this.addWhere(`${field} IS NOT NULL`, {}) },
             { pattern: /(.+?) eq (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} = :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
             { pattern: /(.+?) ne (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} != :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
             { pattern: /(.+?) gt (.+)/, handle: (field: string, value: string) => this.addWhere(`${field} > :val${index}`, { [`val${index}`]: this.parseValue(value) }) },
@@ -132,7 +134,7 @@ export class ODataBuilder<T> {
             const match = filter.match(strategy.pattern);
             if (match) {
                 const field = match[1].trim();
-                const value = match[2].trim();
+                const value = match[2]?.trim();
 
                 if (this.allowedFiltersList.length > 0 && !this.allowedFiltersList.includes(field)) {
                     // Filter not allowed

@@ -72,6 +72,15 @@ describe('ODataBuilder', () => {
         expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledWith('entity.profile', 'profile');
         expect(queryBuilder.leftJoinAndSelect).toHaveBeenCalledTimes(1);
     });
+
+    it('should apply null checks', async () => {
+        await ODataBuilder.for(repo, { $filter: "name eq 'null'" }).execute();
+        expect(queryBuilder.andWhere).toHaveBeenCalledWith("entity.name IS NULL", {});
+
+        await ODataBuilder.for(repo, { $filter: "name ne 'null'" }).execute();
+        expect(queryBuilder.andWhere).toHaveBeenCalledWith("entity.name IS NOT NULL", {});
+    });
+
     it('should return correct response structure', async () => {
         (queryBuilder.getManyAndCount as jest.Mock).mockResolvedValue([
             [{ id: 1, name: 'Test' }],

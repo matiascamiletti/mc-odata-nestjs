@@ -183,4 +183,8 @@ export class ODataBuilder<T> {
         if (!isNaN(Number(value))) return Number(value);
         return value;
     }
+
+    public getQueryBuilder(): SelectQueryBuilder<T> {
+        return this.queryBuilder;
+    }
 }

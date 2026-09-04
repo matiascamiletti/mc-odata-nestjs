@@ -1,7 +1,7 @@
-import { Repository, SelectQueryBuilder, Brackets } from 'typeorm';
+import { Repository, SelectQueryBuilder, Brackets, ObjectLiteral } from 'typeorm';
 import { ODataResponse } from './odata-response';
 
-export class ODataBuilder<T> {
+export class ODataBuilder<T extends ObjectLiteral = any> {
     private repo: Repository<T>;
     private queryBuilder: SelectQueryBuilder<T>;
     private request: any;
@@ -15,8 +15,8 @@ export class ODataBuilder<T> {
         this.queryBuilder = this.repo.createQueryBuilder('entity');
     }
 
-    public static for<T>(repo: Repository<T>, request: any): ODataBuilder<T> {
-        return new ODataBuilder(repo, request);
+    public static for<T extends ObjectLiteral = any>(repo: Repository<T>, request: any): ODataBuilder<T> {
+        return new ODataBuilder<T>(repo, request);
     }
 
     public allowedFilters(filters: string[]): this {
